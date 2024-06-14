@@ -1,3 +1,6 @@
+
+import javax.swing.JOptionPane;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -9,6 +12,10 @@
  */
 public class cadastroVIEW extends javax.swing.JFrame {
 
+    public void limpaTela(){
+        cadastroNome.setText("");
+        cadastroValor.setText("");
+    }
     /**
      * Creates new form cadastroVIEW
      */
@@ -141,21 +148,37 @@ public class cadastroVIEW extends javax.swing.JFrame {
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
         ProdutosDTO produto = new ProdutosDTO();
+        boolean conectado;
         String nome = cadastroNome.getText();
         String valor = cadastroValor.getText();
-        String status = "A Venda";
+        String status = "Vendido";
         produto.setNome(nome);
         produto.setValor(Integer.parseInt(valor));
         produto.setStatus(status);
         
         ProdutosDAO produtodao = new ProdutosDAO();
-        produtodao.cadastrarProduto(produto);
-        
+        conectado = produtodao.conectar();
+        if(conectado == false){
+            JOptionPane.showMessageDialog(null, "Erro de conexão");
+        }
+        else{
+            if(nome.isEmpty() || valor.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Erro ao cadastrar, nenhum campo pode ficar em branco");
+            limpaTela();
+            return;
+            }
+            else{
+                produtodao.cadastrarProduto(produto);
+                JOptionPane.showMessageDialog(null, "Produto cadastrado com sucesso");
+            }
+        }
+        produtodao.desconectar();
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
         listagemVIEW listagem = new listagemVIEW(); 
         listagem.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
