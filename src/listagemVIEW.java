@@ -1,6 +1,9 @@
 
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -12,13 +15,14 @@ import javax.swing.table.DefaultTableModel;
  * @author Adm
  */
 public class listagemVIEW extends javax.swing.JFrame {
-
-    /**
-     * Creates new form listagemVIEW
-     */
+ 
+    ProdutosDAO produtosdao = new ProdutosDAO();
+    boolean conectado;
+    
     public listagemVIEW() {
         initComponents();
         listarProdutos();
+        
     }
 
     /**
@@ -134,11 +138,11 @@ public class listagemVIEW extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         String id = id_produto_venda.getText();
         
-        ProdutosDAO produtosdao = new ProdutosDAO();
+        //ProdutosDAO produtosdao = new ProdutosDAO();
         
         //produtosdao.venderProduto(Integer.parseInt(id));
         listarProdutos();
@@ -150,6 +154,8 @@ public class listagemVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
+        cadastroVIEW cadastro = new cadastroVIEW();
+        cadastro.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnVoltarActionPerformed
 
@@ -202,14 +208,18 @@ public class listagemVIEW extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void listarProdutos(){
+        conectado = produtosdao.conectar();
         try {
-            ProdutosDAO produtosdao = new ProdutosDAO();
+            if(conectado == false){
+            JOptionPane.showMessageDialog(null, "Erro de conexão");
+        }
+        else{
+             ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
             
             DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
             model.setNumRows(0);
-            
-            ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
+            listaProdutos.setRowSorter (new TableRowSorter(model));
+           
             for(int i = 0; i < listagem.size(); i++){
                 model.addRow(new Object[]{
                     listagem.get(i).getId(),
@@ -217,6 +227,9 @@ public class listagemVIEW extends javax.swing.JFrame {
                     listagem.get(i).getValor(),
                     listagem.get(i).getStatus()
                 });
+                
+            }
+            produtosdao.desconectar();
             }
         } catch (Exception e) {
         }
