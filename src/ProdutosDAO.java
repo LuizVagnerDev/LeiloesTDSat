@@ -110,7 +110,41 @@ public class ProdutosDAO {
             return null;
         }
     }
-    
+
+    public int venderProduto(int id){
+        ProdutosDTO produto = new ProdutosDTO();
+        
+        try{
+            stm = conexao.prepareStatement("SELECT * FROM produtos WHERE id = ?");
+            stm.setInt(1, id);
+            rs = stm.executeQuery();
+            
+            if (rs.next()) {
+            produto.setId(rs.getInt("id"));
+            produto.setNome(rs.getString("nome"));
+            produto.setValor(rs.getInt("valor"));
+            produto.setStatus(rs.getString("status"));
+
+            // Atualize o status do produto para "Vendido"
+            produto.setStatus("Vendido");
+
+            // Prepare a declaração de atualização
+            stm = conexao.prepareStatement("UPDATE produtos SET status = ? WHERE id = ?");
+            stm.setString(1, produto.getStatus());
+            stm.setInt(2, produto.getId());
+
+            return stm.executeUpdate();
+        }
+            
+            return stm.executeUpdate();
+            
+        }
+        catch(SQLException ex){
+            
+            return ex.getErrorCode();
+        }
+        
+    }
     
     
     public void desconectar(){
