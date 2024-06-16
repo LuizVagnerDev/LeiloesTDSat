@@ -110,7 +110,7 @@ public class ListagemVIEW extends javax.swing.JFrame {
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(btnVendas, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
@@ -130,7 +130,7 @@ public class ListagemVIEW extends javax.swing.JFrame {
                     .addComponent(btnVender))
                 .addGap(29, 29, 29)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 67, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnVendas)
                     .addComponent(btnVoltar))
@@ -145,12 +145,9 @@ public class ListagemVIEW extends javax.swing.JFrame {
     
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
         ProdutosDTO produtosdto = new ProdutosDTO();
-        ProdutosDAO produtosdao = new ProdutosDAO();
         
         String id = id_produto_venda.getText();
         
-        //listaProdutos.setValueAt(produtosdto,Integer.valueOf(id),3) = "Vendido";
-        //listaProdutos.setValueAt(ProdutosDTO, Integer.valueOf(id, 3)) = produtosdao.produto.getStatus();
         conectado = produtosdao.conectar();
         
         produtosdto.setId(Integer.parseInt(id));
@@ -164,8 +161,6 @@ public class ListagemVIEW extends javax.swing.JFrame {
                 
                 produtosdao.venderProduto(produtosdto.getId());
                 JOptionPane.showMessageDialog(null, "Produto atualizado.");
-                System.out.println(produtosdto.getId());
-              
               
             }
         }catch(Exception e){
@@ -177,8 +172,9 @@ public class ListagemVIEW extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
-        //vendasVIEW vendas = new vendasVIEW(); 
-        //vendas.setVisible(true);
+        VendasVIEW vendas = new VendasVIEW(); 
+        vendas.setVisible(true);
+        dispose();
     }//GEN-LAST:event_btnVendasActionPerformed
 
     private void btnVoltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVoltarActionPerformed
@@ -237,29 +233,26 @@ public class ListagemVIEW extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void listarProdutos(){
-        ProdutosDAO produtosdao = new ProdutosDAO();
+       
         conectado = produtosdao.conectar();
         try {
             if(conectado == false){
             JOptionPane.showMessageDialog(null, "Erro de conexão");
-        }
-        else{
-             ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos();
-            
-            DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
-            model.setNumRows(0);
-            listaProdutos.setRowSorter (new TableRowSorter(model));
-           
-            for(int i = 0; i < listagem.size(); i++){
-                model.addRow(new Object[]{
+            }
+            else{
+                ArrayList<ProdutosDTO> listagem = produtosdao.listarProdutos("");
+                DefaultTableModel model = (DefaultTableModel) listaProdutos.getModel();
+                model.setNumRows(0);
+                listaProdutos.setRowSorter (new TableRowSorter(model));
+                
+                for(int i = 0; i < listagem.size(); i++){
+                    model.addRow(new Object[]{
                     listagem.get(i).getId(),
                     listagem.get(i).getNome(),
                     listagem.get(i).getValor(),
                     listagem.get(i).getStatus()
-                });
-                
-            }
-            produtosdao.desconectar();
+                    });
+                }
             }
         } catch (Exception e) {
         }
