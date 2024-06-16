@@ -17,6 +17,7 @@ import javax.swing.table.TableRowSorter;
 public class ListagemVIEW extends javax.swing.JFrame {
  
     ProdutosDAO produtosdao = new ProdutosDAO();
+    
     boolean conectado;
     
     public ListagemVIEW() {
@@ -139,12 +140,39 @@ public class ListagemVIEW extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     
+    
+   
+    
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
+        ProdutosDTO produtosdto = new ProdutosDTO();
+        ProdutosDAO produtosdao = new ProdutosDAO();
+        
         String id = id_produto_venda.getText();
         
-        //ProdutosDAO produtosdao = new ProdutosDAO();
+        //listaProdutos.setValueAt(produtosdto,Integer.valueOf(id),3) = "Vendido";
+        //listaProdutos.setValueAt(ProdutosDTO, Integer.valueOf(id, 3)) = produtosdao.produto.getStatus();
+        conectado = produtosdao.conectar();
         
-        //produtosdao.venderProduto(Integer.parseInt(id));
+        produtosdto.setId(Integer.parseInt(id));
+        produtosdto.setStatus("Vendido");
+        
+        try {
+            if(conectado == false){
+            JOptionPane.showMessageDialog(null, "Erro de conexão");
+        }
+            else{
+                
+                produtosdao.venderProduto(produtosdto.getId());
+                JOptionPane.showMessageDialog(null, "Produto atualizado.");
+                System.out.println(produtosdto.getId());
+              
+              
+            }
+        }catch(Exception e){
+        
+        }
+        produtosdao.desconectar();
+        
         listarProdutos();
     }//GEN-LAST:event_btnVenderActionPerformed
 
@@ -209,6 +237,7 @@ public class ListagemVIEW extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void listarProdutos(){
+        ProdutosDAO produtosdao = new ProdutosDAO();
         conectado = produtosdao.conectar();
         try {
             if(conectado == false){
