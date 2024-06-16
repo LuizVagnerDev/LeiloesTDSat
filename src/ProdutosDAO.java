@@ -72,37 +72,34 @@ public class ProdutosDAO {
     }
     
     
-    public ArrayList<ProdutosDTO> listarProdutos(){
+    public ArrayList<ProdutosDTO> listarProdutos(String filtro){
       try{
-             ArrayList<ProdutosDTO> listagem = new ArrayList<>();
-                     
-            String sqlFiltro = "SELECT * FROM produtos";
-            
-            /*if(!filtro.isEmpty()){
-                sqlFiltro =  sqlFiltro+ " WHERE nome like ?";   
-            }
-            
-            stm = conexao.prepareStatement(sqlFiltro);
-           
-            if(!filtro.isEmpty()){
-                stm.setString(1, "%" + filtro + "%");
-            }
-            */
-            stm = conexao.prepareStatement(sqlFiltro);
-             rs = stm.executeQuery();
-             
-             while(rs.next()){
-                 ProdutosDTO produtoNaLista = new ProdutosDTO();
-                 
-                 produtoNaLista.setId(rs.getInt("id"));
-                 produtoNaLista.setNome(rs.getString("nome"));
-                 produtoNaLista.setValor(rs.getInt("valor"));
-                 produtoNaLista.setStatus(rs.getString("status"));
-                 
-                 listagem.add(produtoNaLista);
-                
-             }
-             return listagem;
+          ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+          
+          String sql;
+          if (!filtro.isEmpty()) {
+            sql = "SELECT * FROM produtos WHERE status = ?";
+            stm = conexao.prepareStatement(sql);
+            stm.setString(1, filtro);
+        } else {
+            sql = "SELECT * FROM produtos";
+            stm = conexao.prepareStatement(sql);
+        }
+          
+          
+          rs = stm.executeQuery();
+
+          while (rs.next()) {
+              ProdutosDTO produtoNaLista = new ProdutosDTO();
+
+              produtoNaLista.setId(rs.getInt("id"));
+              produtoNaLista.setNome(rs.getString("nome"));
+              produtoNaLista.setValor(rs.getInt("valor"));
+              produtoNaLista.setStatus(rs.getString("status"));
+
+              listagem.add(produtoNaLista);
+          }
+          return listagem;
         }
         
         
@@ -124,11 +121,8 @@ public class ProdutosDAO {
             produto.setNome(rs.getString("nome"));
             produto.setValor(rs.getInt("valor"));
             produto.setStatus(rs.getString("status"));
-
-            // Atualize o status do produto para "Vendido"
+            
             produto.setStatus("Vendido");
-
-            // Prepare a declaração de atualização
             stm = conexao.prepareStatement("UPDATE produtos SET status = ? WHERE id = ?");
             stm.setString(1, produto.getStatus());
             stm.setInt(2, produto.getId());
